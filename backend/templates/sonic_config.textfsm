@@ -1,0 +1,28 @@
+Value HOSTNAME (\S+)
+Value SSH_ENABLED (True)
+Value List NTP_SERVERS (\d+\.\d+\.\d+\.\d+)
+Value List SYSLOG_SERVERS (\d+\.\d+\.\d+\.\d+)
+Value AAA_ENABLED (True)
+Value TACACS_SERVER (\d+\.\d+\.\d+\.\d+)
+
+Start
+  ^hostname\s+${HOSTNAME}
+  ^frr\s+version
+  ^service\s+ssh -> SetSSH
+  ^ntp\s+server\s+${NTP_SERVERS}
+  ^log\s+syslog\s+${SYSLOG_SERVERS}
+  ^ip\s+route
+  ^config\s+tacacs\s+add\s+${TACACS_SERVER} -> SetAAA
+  ^banner\s+motd
+
+SetSSH
+  ^## -> SetSSHTrue
+
+SetSSHTrue
+  ^## -> Start
+
+SetAAA
+  ^## -> SetAAATrueState
+
+SetAAATrueState
+  ^## -> Start

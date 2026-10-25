@@ -1,0 +1,156 @@
+[
+  {
+    "control_id": "V-220518",
+    "title": "Network Device SSH Version 2",
+    "description": "DISA STIG: The network device must use SSH Version 2 for all remote management sessions. SSH v1 is vulnerable to man-in-the-middle attacks.",
+    "param": "ssh_version",
+    "operator": "eq",
+    "value": 2,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: ip ssh version 2"
+  },
+  {
+    "control_id": "V-220519",
+    "title": "Telnet Prohibited",
+    "description": "DISA STIG: The network device must not use Telnet for remote management. Telnet sends all data in cleartext.",
+    "param": "telnet_enabled",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Disable telnet: transport input ssh (all VTY lines)"
+  },
+  {
+    "control_id": "V-220520",
+    "title": "AAA Required",
+    "description": "DISA STIG: The network device must use AAA authentication for all management access. Local-only auth is not sufficient for classified environments.",
+    "param": "aaa.enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: aaa new-model / aaa authentication login default group tacacs+ local"
+  },
+  {
+    "control_id": "V-220521",
+    "title": "TACACS+ or RADIUS for AAA",
+    "description": "DISA STIG: Authentication must be performed using a centralized AAA server (TACACS+ or RADIUS), not only local accounts.",
+    "param": "aaa.authentication_login_tacacs",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: aaa authentication login default group tacacs+ local"
+  },
+  {
+    "control_id": "V-220522",
+    "title": "Enable Secret Required",
+    "description": "DISA STIG: The network device must use an enable secret (type 5 or higher) for privileged EXEC mode.",
+    "param": "enable_secret_set",
+    "operator": "is_true",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: enable secret <password>"
+  },
+  {
+    "control_id": "V-220523",
+    "title": "SNMPv3 Required",
+    "description": "DISA STIG: The network device must use SNMPv3 with authentication and privacy. SNMPv1 and v2c are prohibited.",
+    "param": "snmp.version",
+    "operator": "eq",
+    "value": "v3",
+    "severity": "HIGH",
+    "skip_if_null": true,
+    "remediation": "Configure: snmp-server group <name> v3 priv / snmp-server user <name> <group> v3 auth sha <auth_pw> priv aes 128 <priv_pw>"
+  },
+  {
+    "control_id": "V-220524",
+    "title": "No Default SNMP Community Strings",
+    "description": "DISA STIG: The network device must not use 'public' or 'private' SNMP community strings.",
+    "param": "snmp.community_public_ro",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": true,
+    "remediation": "Remove default SNMP communities: no snmp-server community public / no snmp-server community private"
+  },
+  {
+    "control_id": "V-220525",
+    "title": "NTP Configured with Authentication",
+    "description": "DISA STIG: The network device must synchronize its clock using authenticated NTP servers.",
+    "param": "ntp.authentication_enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": false,
+    "remediation": "Configure: ntp authenticate / ntp authentication-key 1 md5 <key> / ntp trusted-key 1 / ntp server <ip> key 1"
+  },
+  {
+    "control_id": "V-220526",
+    "title": "Password Encryption Enabled",
+    "description": "DISA STIG: The network device must encrypt all passwords using strong algorithms.",
+    "param": "password_encryption_service",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: service password-encryption"
+  },
+  {
+    "control_id": "V-220527",
+    "title": "HTTP Server Disabled",
+    "description": "DISA STIG: The HTTP server on the device must be disabled. Only HTTPS or console/SSH management is authorized.",
+    "param": "http_server_enabled",
+    "operator": "is_false",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": true,
+    "remediation": "Configure: no ip http server"
+  },
+  {
+    "control_id": "V-220528",
+    "title": "MOTD Banner Required",
+    "description": "DISA STIG: The network device must display a DoD-approved banner before granting access.",
+    "param": "banner_motd_set",
+    "operator": "is_true",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": false,
+    "remediation": "Configure banner motd with DoD warning text"
+  },
+  {
+    "control_id": "V-220529",
+    "title": "Remote Syslog Configured",
+    "description": "DISA STIG: The network device must send log data to a centralized log server for monitoring.",
+    "param": "logging.remote_host",
+    "operator": "not_null",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: logging host <SYSLOG_IP> transport udp port 514"
+  },
+  {
+    "control_id": "V-220530",
+    "title": "VTY Exec Timeout ≤ 10 minutes",
+    "description": "DISA STIG: The network device must terminate management sessions after 10 minutes of inactivity.",
+    "param": "vty_timeout",
+    "operator": "lte",
+    "value": 10,
+    "severity": "MEDIUM",
+    "skip_if_null": true,
+    "remediation": "Configure: line vty 0 15 / exec-timeout 10 0"
+  },
+  {
+    "control_id": "V-220531",
+    "title": "VTY ACL Applied",
+    "description": "DISA STIG: An ACL must restrict which management hosts can access VTY lines.",
+    "param": "vty_acl_applied",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: ip access-list standard MGMT-ACL / permit <mgmt_subnet> / line vty 0 15 / access-class MGMT-ACL in"
+  }
+]

@@ -1,0 +1,34 @@
+Value HOSTNAME (\S+)
+Value SSH_ENABLED (True)
+Value TELNET_ENABLED (True)
+Value SNMP_VERSION (v1|v2c|v3)
+Value List SYSLOG_PROFILES (\S+)
+Value List NTP_PRIMARY (\d+\.\d+\.\d+\.\d+)
+Value BANNER (True)
+
+Start
+  ^set\s+deviceconfig\s+system\s+hostname\s+${HOSTNAME}
+  ^set\s+deviceconfig\s+system\s+service\s+ssh -> SetSSH
+  ^set\s+deviceconfig\s+system\s+service\s+telnet -> SetTelnet
+  ^set\s+deviceconfig\s+system\s+snmp-setting\s+access-setting\s+version\s+${SNMP_VERSION}
+  ^set\s+deviceconfig\s+system\s+ntp-servers\s+primary-ntp-server\s+ntp-server-address\s+${NTP_PRIMARY}
+  ^set\s+deviceconfig\s+system\s+motd-and-banner -> SetBanner
+  ^set\s+shared\s+log-forwarding\s+${SYSLOG_PROFILES}
+
+SetSSH
+  ^## -> SetSSHTrue
+
+SetSSHTrue
+  ^## -> Start
+
+SetTelnet
+  ^## -> SetTelnetTrue
+
+SetTelnetTrue
+  ^## -> Start
+
+SetBanner
+  ^## -> SetBannerTrue
+
+SetBannerTrue
+  ^## -> Start

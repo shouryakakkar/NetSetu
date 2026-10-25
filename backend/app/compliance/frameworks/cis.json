@@ -1,0 +1,211 @@
+[
+  {
+    "control_id": "CIS-L1-1.1",
+    "title": "SSH Protocol Version 2",
+    "description": "Ensure SSH version 2 is used. Version 1 has known cryptographic vulnerabilities.",
+    "param": "ssh_version",
+    "operator": "eq",
+    "value": 2,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: ip ssh version 2"
+  },
+  {
+    "control_id": "CIS-L1-1.2",
+    "title": "Telnet Disabled",
+    "description": "Telnet transmits credentials in cleartext. It must be disabled on all VTY lines.",
+    "param": "telnet_enabled",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: line vty 0 4 / transport input ssh"
+  },
+  {
+    "control_id": "CIS-L1-1.3",
+    "title": "VTY Lines Restricted to SSH",
+    "description": "VTY lines should only accept SSH connections to prevent cleartext remote access.",
+    "param": "vty_transport_input_ssh_only",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: line vty 0 4 / transport input ssh"
+  },
+  {
+    "control_id": "CIS-L1-1.4",
+    "title": "VTY ACL Applied",
+    "description": "An access control list should restrict which IP addresses can access the device via VTY.",
+    "param": "vty_acl_applied",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: line vty 0 4 / access-class <ACL_NAME> in"
+  },
+  {
+    "control_id": "CIS-L1-1.5",
+    "title": "VTY Exec Timeout",
+    "description": "VTY sessions must time out after no more than 10 minutes of inactivity.",
+    "param": "vty_timeout",
+    "operator": "lte",
+    "value": 10,
+    "severity": "MEDIUM",
+    "skip_if_null": true,
+    "remediation": "Configure: line vty 0 4 / exec-timeout 10 0"
+  },
+  {
+    "control_id": "CIS-L1-2.1",
+    "title": "SNMPv3 Only",
+    "description": "SNMPv1 and v2c use cleartext community strings. Only SNMPv3 with auth+priv is acceptable.",
+    "param": "snmp.version",
+    "operator": "eq",
+    "value": "v3",
+    "severity": "HIGH",
+    "skip_if_null": true,
+    "remediation": "Configure SNMPv3 user with auth SHA and priv AES-128"
+  },
+  {
+    "control_id": "CIS-L1-2.2",
+    "title": "No SNMP Public Community",
+    "description": "The default 'public' SNMP community string must not be configured (read access to all MIBs).",
+    "param": "snmp.community_public_ro",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": true,
+    "remediation": "Remove: no snmp-server community public"
+  },
+  {
+    "control_id": "CIS-L1-2.3",
+    "title": "No SNMP Private Community",
+    "description": "The default 'private' SNMP community string must not be configured (write access).",
+    "param": "snmp.community_private_rw",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": true,
+    "remediation": "Remove: no snmp-server community private"
+  },
+  {
+    "control_id": "CIS-L1-3.1",
+    "title": "AAA Enabled",
+    "description": "Authentication, Authorization, and Accounting must be centrally managed.",
+    "param": "aaa.enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: aaa new-model"
+  },
+  {
+    "control_id": "CIS-L1-3.2",
+    "title": "AAA New-Model",
+    "description": "The 'aaa new-model' command must be present to enable the AAA framework.",
+    "param": "aaa.new_model",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: aaa new-model"
+  },
+  {
+    "control_id": "CIS-L1-4.1",
+    "title": "NTP Configured",
+    "description": "Network Time Protocol must be configured to ensure accurate timestamps for logs.",
+    "param": "ntp.configured",
+    "operator": "is_true",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": false,
+    "remediation": "Configure: ntp server <NTP_IP>"
+  },
+  {
+    "control_id": "CIS-L1-4.2",
+    "title": "NTP Authentication",
+    "description": "NTP must use authentication to prevent rogue NTP servers from manipulating device time.",
+    "param": "ntp.authentication_enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": true,
+    "remediation": "Configure: ntp authenticate / ntp authentication-key <id> md5 <key> / ntp trusted-key <id>"
+  },
+  {
+    "control_id": "CIS-L1-5.1",
+    "title": "Password Encryption Service",
+    "description": "The 'service password-encryption' command must be enabled to obfuscate type-7 passwords.",
+    "param": "password_encryption_service",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: service password-encryption"
+  },
+  {
+    "control_id": "CIS-L1-5.2",
+    "title": "Enable Secret Configured",
+    "description": "The enable secret (type-5 or better) must be set to prevent unauthorized privileged access.",
+    "param": "enable_secret_set",
+    "operator": "is_true",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: enable secret <strong_password>"
+  },
+  {
+    "control_id": "CIS-L1-6.1",
+    "title": "HTTP Server Disabled",
+    "description": "The HTTP server exposes device management over cleartext. It must be disabled.",
+    "param": "http_server_enabled",
+    "operator": "is_false",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": true,
+    "remediation": "Configure: no ip http server"
+  },
+  {
+    "control_id": "CIS-L1-7.1",
+    "title": "MOTD Banner Configured",
+    "description": "A login banner (MOTD) must be configured with a legal warning notice.",
+    "param": "banner_motd_set",
+    "operator": "is_true",
+    "value": null,
+    "severity": "LOW",
+    "skip_if_null": false,
+    "remediation": "Configure: banner motd # Authorized access only. Unauthorized access is prohibited. #"
+  },
+  {
+    "control_id": "CIS-L1-8.1",
+    "title": "Logging Enabled",
+    "description": "Logging must be enabled and sent to a remote syslog server for audit trail.",
+    "param": "logging.enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: logging on / logging host <SYSLOG_IP>"
+  },
+  {
+    "control_id": "CIS-L1-8.2",
+    "title": "Remote Syslog Host Configured",
+    "description": "Logs must be forwarded to a remote syslog server to ensure they cannot be tampered with locally.",
+    "param": "logging.remote_host",
+    "operator": "not_null",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: logging host <SYSLOG_SERVER_IP>"
+  },
+  {
+    "control_id": "CIS-L1-9.1",
+    "title": "CDP Disabled Globally",
+    "description": "Cisco Discovery Protocol reveals network topology to adjacent devices. Disable if not required.",
+    "param": "cdp_enabled_globally",
+    "operator": "is_false",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": true,
+    "remediation": "Configure: no cdp run"
+  }
+]

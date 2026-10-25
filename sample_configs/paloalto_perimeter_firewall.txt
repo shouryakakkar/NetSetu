@@ -1,0 +1,21 @@
+set deviceconfig system hostname Perimeter-FW-01
+set deviceconfig system ip-address 192.168.1.1 netmask 255.255.255.0
+set deviceconfig system default-gateway 192.168.1.254
+set deviceconfig system dns-setting servers primary 8.8.8.8
+
+set deviceconfig system service disable-telnet no
+set deviceconfig system service disable-http no
+set deviceconfig system service disable-ssh no
+
+set mgt-config users admin password-hash "$1$v3rYsEcR3t$9X...hash"
+set mgt-config users admin permissions role-based superuser yes
+
+set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 10.0.0.1
+set deviceconfig system snmp-setting version v2c
+set deviceconfig system snmp-setting snmp-community-string public
+
+set zone TRUST network layer3 [ ethernet1/1 ]
+set zone UNTRUST network layer3 [ ethernet1/2 ]
+
+set rulebase security rules "Inbound Web Access" from UNTRUST to TRUST source any destination any service service-http action allow
+set rulebase security rules "Outbound Any" from TRUST to UNTRUST source any destination any service any action allow

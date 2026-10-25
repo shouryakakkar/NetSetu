@@ -1,0 +1,134 @@
+[
+  {
+    "control_id": "NIST-AC-17(2)",
+    "title": "Remote Access | Protection of Confidentiality / Integrity Using Encryption",
+    "description": "The information system implements cryptographic mechanisms to protect the confidentiality and integrity of remote access sessions. SSH v2 is required.",
+    "param": "ssh_version",
+    "operator": "eq",
+    "value": 2,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: ip ssh version 2"
+  },
+  {
+    "control_id": "NIST-AC-17(1)",
+    "title": "Remote Access | Automated Monitoring / Control",
+    "description": "Telnet provides no encryption and must be disabled. All remote access must use SSH.",
+    "param": "telnet_enabled",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Disable: no service telnet / transport input ssh on all VTY lines"
+  },
+  {
+    "control_id": "NIST-AC-2(5)",
+    "title": "Account Management | Inactivity Logout",
+    "description": "The system must automatically terminate sessions after a defined period of inactivity (≤10 min).",
+    "param": "vty_timeout",
+    "operator": "lte",
+    "value": 10,
+    "severity": "MEDIUM",
+    "skip_if_null": true,
+    "remediation": "Configure: exec-timeout 10 0 on all VTY and console lines"
+  },
+  {
+    "control_id": "NIST-IA-3",
+    "title": "Device Identification and Authentication",
+    "description": "AAA must be enabled so that all users authenticate before accessing device management functions.",
+    "param": "aaa.enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: aaa new-model"
+  },
+  {
+    "control_id": "NIST-IA-5(1)",
+    "title": "Authenticator Management | Password-Based Authentication",
+    "description": "Passwords must be stored using a strong one-way hashing algorithm. Enable secret (type-5+) required.",
+    "param": "enable_secret_set",
+    "operator": "is_true",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": false,
+    "remediation": "Configure: enable secret <strong_password> (type-5 or type-8/9)"
+  },
+  {
+    "control_id": "NIST-IA-5(7)",
+    "title": "Authenticator Management | No Embedded Unencrypted Static Authenticators",
+    "description": "Service password-encryption must be enabled to prevent cleartext passwords in configuration.",
+    "param": "password_encryption_service",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: service password-encryption"
+  },
+  {
+    "control_id": "NIST-SC-8",
+    "title": "Transmission Confidentiality and Integrity",
+    "description": "The HTTP cleartext management interface must be disabled. HTTPS or out-of-band only.",
+    "param": "http_server_enabled",
+    "operator": "is_false",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": true,
+    "remediation": "Configure: no ip http server"
+  },
+  {
+    "control_id": "NIST-SI-12",
+    "title": "Information Management and Retention — SNMP",
+    "description": "SNMP community strings 'public' and 'private' are well-known defaults and must not be used.",
+    "param": "snmp.community_public_ro",
+    "operator": "is_false",
+    "value": null,
+    "severity": "CRITICAL",
+    "skip_if_null": true,
+    "remediation": "Remove: no snmp-server community public RO"
+  },
+  {
+    "control_id": "NIST-AU-2",
+    "title": "Audit Events",
+    "description": "The organization must determine events to be audited. Remote syslog must be configured.",
+    "param": "logging.remote_host",
+    "operator": "not_null",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": false,
+    "remediation": "Configure: logging host <SYSLOG_IP> / logging trap informational"
+  },
+  {
+    "control_id": "NIST-AU-8",
+    "title": "Time Stamps",
+    "description": "NTP must be configured so that audit log timestamps are accurate and consistent.",
+    "param": "ntp.configured",
+    "operator": "is_true",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": false,
+    "remediation": "Configure: ntp server <PRIMARY_NTP> / ntp server <SECONDARY_NTP>"
+  },
+  {
+    "control_id": "NIST-AU-9",
+    "title": "Protection of Audit Information",
+    "description": "NTP must use cryptographic authentication to prevent log timestamp manipulation.",
+    "param": "ntp.authentication_enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "MEDIUM",
+    "skip_if_null": true,
+    "remediation": "Configure: ntp authenticate / ntp trusted-key <id>"
+  },
+  {
+    "control_id": "NIST-SC-5",
+    "title": "Denial of Service Protection",
+    "description": "BGP MD5 authentication must be configured to prevent route injection attacks.",
+    "param": "bgp.md5_auth_enabled",
+    "operator": "is_true",
+    "value": null,
+    "severity": "HIGH",
+    "skip_if_null": true,
+    "remediation": "Configure: neighbor <IP> password <strong_key>"
+  }
+]

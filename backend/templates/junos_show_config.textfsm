@@ -1,0 +1,75 @@
+Value HOSTNAME (\S+)
+Value SSH_PROTO_VERSION (v1|v2)
+Value TELNET_ENABLED (True)
+Value List NTP_SERVERS (\d+\.\d+\.\d+\.\d+)
+Value NTP_AUTH_ENABLED (True)
+Value List SNMP_COMMUNITIES (\S+)
+Value SNMP_V3 (True)
+Value List SYSLOG_HOSTS (\d+\.\d+\.\d+\.\d+)
+Value BANNER (True)
+Value List RADIUS_SERVERS (\d+\.\d+\.\d+\.\d+)
+Value List TACACS_SERVERS (\d+\.\d+\.\d+\.\d+)
+
+Start
+  ^system\s+\{
+  ^\s+host-name\s+${HOSTNAME};
+  ^\s+services\s+\{
+  ^\s+ssh\s+\{ -> SSH
+  ^\s+telnet\s+\{ -> SetTelnet
+  ^\s+syslog\s+\{ -> Syslog
+  ^\s+login\s+\{ -> Login
+  ^\s+message\s+".+" -> SetBanner
+  ^ntp\s+\{ -> NTP
+  ^snmp\s+\{ -> SNMP
+  ^access\s+\{ -> Access
+
+SSH
+  ^\s+protocol-version\s+${SSH_PROTO_VERSION};
+  ^\s+\} -> Start
+
+SetTelnet
+  ^. -> SetTelnetTrue
+
+SetTelnetTrue
+  ^. -> TelnetTrue
+
+TelnetTrue
+  ^## -> Start
+
+NTP
+  ^\s+server\s+${NTP_SERVERS};
+  ^\s+authentication-key -> SetNTPAuth
+  ^\s+\} -> Start
+
+SetNTPAuth
+  ^\s+. -> NTPAuthTrue
+
+NTPAuthTrue
+  ^\s+trusted-key -> Continue
+  ^[^\s] -> Start
+
+SNMP
+  ^\s+community\s+${SNMP_COMMUNITIES}\s+\{
+  ^\s+v3\s+\{ -> SetSNMPV3
+  ^\s+\} -> Start
+
+SetSNMPV3
+  ^## -> Start
+
+Syslog
+  ^\s+host\s+${SYSLOG_HOSTS}\s+\{
+  ^\s+\} -> Start
+
+Login
+  ^\s+message\s+ -> SetBanner
+
+Access
+  ^\s+radius-server\s+${RADIUS_SERVERS};
+  ^\s+tacacs-plus-server\s+${TACACS_SERVERS};
+  ^\s+\} -> Start
+
+SetBanner
+  ^## -> SetBannerTrue
+
+SetBannerTrue
+  ^## -> Start

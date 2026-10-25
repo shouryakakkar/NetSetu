@@ -1,0 +1,46 @@
+Value HOSTNAME (\S+)
+Value VERSION (\S+)
+Value SSH_VERSION (\d+)
+Value AAA_NEW_MODEL (new-model)
+Value PASSWORD_ENCRYPTION (password-encryption)
+Value HTTP_SERVER (http server|no ip http server)
+Value ENABLE_SECRET (secret)
+Value SNMP_VERSION (v1|v2c|v3)
+Value List SNMP_COMMUNITY (\S+)
+Value NTP_AUTH (authenticate)
+Value List NTP_SERVERS (\d+\.\d+\.\d+\.\d+)
+Value List LOGGING_HOSTS (\d+\.\d+\.\d+\.\d+)
+Value BANNER_MOTD (True)
+Value VTY_TRANSPORT (\S+)
+Value VTY_TIMEOUT (\d+)
+Value CDP_DISABLED (no cdp run)
+
+Start
+  ^hostname\s+${HOSTNAME}
+  ^version\s+${VERSION}
+  ^ip\s+ssh\s+version\s+${SSH_VERSION}
+  ^aaa\s+${AAA_NEW_MODEL}
+  ^service\s+${PASSWORD_ENCRYPTION}
+  ^ip\s+http\s+server -> Record
+  ^no\s+ip\s+http\s+server -> Record
+  ^enable\s+${ENABLE_SECRET}
+  ^snmp-server\s+version\s+${SNMP_VERSION}
+  ^snmp-server\s+community\s+${SNMP_COMMUNITY}\s+RO
+  ^ntp\s+${NTP_AUTH}
+  ^ntp\s+server\s+${NTP_SERVERS}
+  ^logging\s+host\s+${LOGGING_HOSTS}
+  ^banner\s+motd -> Banner
+  ^no\s+cdp\s+run -> Record
+  ^line\s+vty -> VTY
+
+VTY
+  ^\s+transport\s+input\s+${VTY_TRANSPORT}
+  ^\s+exec-timeout\s+${VTY_TIMEOUT}
+  ^line -> Continue.Record
+  ^[^\s] -> Continue.Record
+
+Banner
+  ^. -> Continue
+  ^\^ -> Start
+  ^# -> Start
+  ^C -> Start
